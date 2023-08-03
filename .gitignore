@@ -83,3 +83,7 @@ _darcs
 /output_*
 
 **/ops/lib*.so.*
+
+# custom
+.sh
+.txt

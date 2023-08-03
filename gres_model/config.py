@@ -120,10 +120,12 @@ def add_refcoco_config(cfg):
     """
     Add config for RefCOCO.
     """
-    cfg.DATASETS.REF_ROOT = "refer/data/"
+    cfg.DATASETS.REF_ROOT = "datasets/" # "refer/data/"
     cfg.DATASETS.DATASET_NAME = "refcoco"
     cfg.DATASETS.SPLIT_BY = "unc"
+    cfg.DATASETS.MOSAIC_AUG = False
 
     cfg.REFERRING = CN()
     cfg.REFERRING.BERT_TYPE = "bert-base-uncased"
     cfg.REFERRING.MAX_TOKENS = 20
+    

@@ -11,7 +11,7 @@ def refer_ce_loss(
         inputs: torch.Tensor,
         targets: torch.Tensor,
         weight: torch.Tensor):
-
+    targets = targets.long()
     loss = F.cross_entropy(inputs, targets, weight=weight)
 
     return loss

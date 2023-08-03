@@ -89,7 +89,7 @@ class GRES(nn.Module):
 
         criterion = ReferringCriterion(
             weight_dict=weight_dict,
-            losses=losses,
+            losses=losses
         )
 
         return {
@@ -176,23 +176,29 @@ class GRES(nn.Module):
 
             return processed_results
 
-    def prepare_targets(self, batched_inputs, images):
+    def prepare_targets(self, batched_inputs, images ):
         h_pad, w_pad = images.tensor.shape[-2:]
         new_targets = []
 
         for data_per_image in batched_inputs:
-            # pad instances
-            targets_per_image = data_per_image['instances'].to(self.device)
-            gt_masks = targets_per_image.gt_masks
-            padded_masks = torch.zeros((gt_masks.shape[0], h_pad, w_pad), dtype=gt_masks.dtype, device=gt_masks.device)
-            padded_masks[:, : gt_masks.shape[1], : gt_masks.shape[2]] = gt_masks
-            padded_masks = torch.zeros((gt_masks.shape[0], h_pad, w_pad), dtype=gt_masks.dtype, device=gt_masks.device)
-            is_empty = torch.tensor(data_per_image['empty'], dtype=targets_per_image.gt_classes.dtype
-, device=targets_per_image.gt_classes.device)
-            target_dict = {
-                    "labels": targets_per_image.gt_classes,
-                    "masks": padded_masks,
-                    "empty": is_empty,
+            if data_per_image.get('instances', False): 
+                # pad instances
+                targets_per_image = data_per_image['instances'].to(self.device)
+                gt_masks = targets_per_image.gt_masks
+                padded_masks = torch.zeros((gt_masks.shape[0], h_pad, w_pad), dtype=gt_masks.dtype, device=gt_masks.device)
+                padded_masks[:, : gt_masks.shape[1], : gt_masks.shape[2]] = gt_masks
+                padded_masks = torch.zeros((gt_masks.shape[0], h_pad, w_pad), dtype=gt_masks.dtype, device=gt_masks.device)
+                is_empty = torch.tensor(data_per_image['empty'], dtype=targets_per_image.gt_classes.dtype
+    , device=targets_per_image.gt_classes.device)
+                target_dict = {
+                        "labels": targets_per_image.gt_classes,
+                        "masks": padded_masks,
+                        "empty": is_empty,
+                    }
+            else :
+                is_empty = torch.tensor(data_per_image['empty'], dtype=bool, device=self.device)
+                target_dict = {
+                    "empty" : is_empty
                 }
             if data_per_image["gt_mask_merged"] is not None:
                 target_dict["gt_mask_merged"] = data_per_image["gt_mask_merged"].to(self.device)

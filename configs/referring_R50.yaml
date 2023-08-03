@@ -47,11 +47,12 @@ INPUT:
   IMAGE_SIZE: 480
 
 DATASETS:
-  TRAIN: ("grefcoco_unc_train",)
-  TEST: ("grefcoco_unc_val",)
+  TRAIN: ("refcoco_unc_train",)
+  TEST: ("refcoco_unc_val",)
+  MOSAIC_AUG : False
 
 SOLVER:
-  IMS_PER_BATCH: 48
+  IMS_PER_BATCH: 256
   BASE_LR: 0.00001
   STEPS: (110000, 210000)
   MAX_ITER: 300000
