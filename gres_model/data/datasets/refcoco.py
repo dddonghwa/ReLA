@@ -23,7 +23,7 @@ __all__ = ["load_refcoco_json"]
 
 
 def load_refcoco_json(refer_root, dataset_name, splitby, split, image_root, extra_annotation_keys=None, extra_refer_keys=None):
-
+    
     if dataset_name == 'refcocop':
         dataset_name = 'refcoco+'
     if dataset_name == 'refcoco' or dataset_name == 'refcoco+':
@@ -63,8 +63,9 @@ def load_refcoco_json(refer_root, dataset_name, splitby, split, image_root, extr
 
     eval_mode = (split != 'train')
 
-    for (img_dict, ref_dict, anno_dict) in imgs_refs_anns:
+    for idx, (img_dict, ref_dict, anno_dict) in enumerate(imgs_refs_anns):
         record = {}
+        record['id'] = idx
         record["source"] = 'refcoco'
         record["file_name"] = os.path.join(image_root, img_dict["file_name"])
         record["height"] = img_dict["height"]
@@ -135,13 +136,14 @@ if __name__ == "__main__":
     from detectron2.utils.visualizer import Visualizer
     import detectron2.data.datasets  # noqa # add pre-defined metadata
     import sys
+    # from refer import REFER
 
-    REFCOCO_PATH = '_'
+    REFCOCO_PATH = '/home/donghwa/data/projects/donghwa/RIS/ReLA/datasets'
     REFCOCO_DATASET = 'refcoco'
     REFCOCO_SPLITBY = 'unc'
     REFCOCO_SPLIT = 'val'
-    COCO_TRAIN_2014_IMAGE_ROOT = '_'
-
+    COCO_TRAIN_2014_IMAGE_ROOT = '/home/donghwa/data/projects/donghwa/RIS/ReLA/datasets/images/train2014'
+    
     logger = setup_logger(name=__name__)
 
     dicts = load_refcoco_json(REFCOCO_PATH, REFCOCO_DATASET, REFCOCO_SPLITBY, REFCOCO_SPLIT, COCO_TRAIN_2014_IMAGE_ROOT)

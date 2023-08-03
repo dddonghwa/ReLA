@@ -64,8 +64,9 @@ def load_grefcoco_json(refer_root, dataset_name, splitby, split, image_root, ext
     NT_count = 0
     MT_count = 0
 
-    for (img_dict, ref_dict, anno_dicts) in imgs_refs_anns:
+    for idx, (img_dict, ref_dict, anno_dicts) in enumerate(imgs_refs_anns):
         record = {}
+        record['id'] = idx
         record["source"] = 'grefcoco'
         record["file_name"] = os.path.join(image_root, img_dict["file_name"])
         record["height"] = img_dict["height"]

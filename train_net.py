@@ -11,6 +11,9 @@ try:
 except:
     pass
 
+import warnings
+warnings.filterwarnings('ignore')
+
 import copy
 import itertools
 import logging
@@ -46,7 +49,9 @@ from gres_model import (
     RefCOCOMapper,
     ReferEvaluator,
     add_maskformer2_config,
-    add_refcoco_config
+    add_refcoco_config,
+    RefCOCOMosaicMapper,
+    MosaicVisualization
 )
 
 
@@ -70,14 +75,30 @@ class Trainer(DefaultTrainer):
     @classmethod
     def build_train_loader(cls, cfg):
         assert cfg.INPUT.DATASET_MAPPER_NAME == "refcoco"
-        mapper = RefCOCOMapper(cfg, True)
-        return build_detection_train_loader(cfg, mapper=mapper)
+        if cfg.DATASETS.MOSAIC_AUG == False :
+            mapper = RefCOCOMapper(cfg, True)
+            fpath = os.path.join("coco-data-vis", cfg.DATASETS.TRAIN[0])
+        elif cfg.DATASETS.MOSAIC_AUG == True :
+            mapper = RefCOCOMosaicMapper(cfg, True )
+            fpath = os.path.join("coco-data-vis-aug", cfg.DATASETS.TRAIN[0])
+        
+        train_loader = build_detection_train_loader(cfg, mapper=mapper)
+        MosaicVisualization(train_loader, fpath)
+        return train_loader
 
     @classmethod
     def build_test_loader(cls, cfg, dataset_name):
         assert cfg.INPUT.DATASET_MAPPER_NAME == "refcoco"
-        mapper = RefCOCOMapper(cfg, False)
-        return build_detection_test_loader(cfg, dataset_name, mapper=mapper)
+        if cfg.DATASETS.MOSAIC_AUG == False :
+            mapper = RefCOCOMapper(cfg, False)
+            fpath = os.path.join("coco-data-vis", cfg.DATASETS.TEST[0])
+        elif cfg.DATASETS.MOSAIC_AUG == True :
+            mapper = RefCOCOMosaicMapper(cfg, False)
+            fpath = os.path.join("coco-data-vis-aug", cfg.DATASETS.TEST[0])
+        
+        test_loader = build_detection_test_loader(cfg, dataset_name, mapper=mapper)
+        MosaicVisualization(test_loader, fpath)
+        return test_loader
 
     @classmethod
     def build_lr_scheduler(cls, cfg, optimizer):
@@ -210,6 +231,7 @@ def main(args):
 
 
 if __name__ == "__main__":
+    warnings.filterwarnings(action='ignore')
     args = default_argument_parser().parse_args()
     print("Command Line Args:", args)
     launch(
