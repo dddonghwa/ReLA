@@ -49,7 +49,8 @@ class REFER:
         self.ROOT_DIR = osp.abspath(osp.dirname(__file__))
         self.DATA_DIR = osp.join(data_root, dataset)
         if dataset in ['refcoco', 'refcoco+', 'refcocog']:
-            self.IMAGE_DIR = osp.join(data_root, 'images/mscoco/images/train2014')
+            # self.IMAGE_DIR = osp.join(data_root, 'images/mscoco/images/train2014')
+            self.IMAGE_DIR = osp.join(data_root, 'images/train2014')
         elif dataset == 'refclef':
             self.IMAGE_DIR = osp.join(data_root, 'images/saiapr_tc-12')
         else:
@@ -300,12 +301,13 @@ class REFER:
 
 
 if __name__ == '__main__':
-    refer = REFER(dataset='refcocog', splitBy='google')
+    
+    refer = REFER(data_root='/data/projects/donghwa/RIS/ReLA/datasets', dataset='refcocog', splitBy='google')
     ref_ids = refer.getRefIds()
 
     ref_ids = refer.getRefIds(split='train')
     print('There are %s training referred objects.' % len(ref_ids))
-
+    
     for ref_id in ref_ids:
         ref = refer.loadRefs(ref_id)[0]
         if len(ref['sentences']) < 2:

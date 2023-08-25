@@ -87,3 +87,7 @@ _darcs
 # custom
 .sh
 .txt
+detectron2/
+inference/
+log_save/
+

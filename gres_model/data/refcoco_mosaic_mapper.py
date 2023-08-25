@@ -34,7 +34,7 @@ from .datasets.grefer import G_REFER
 class aug:
     img_size = 480
     num_bgs = 4
-    aug_prob = 1.0
+    aug_prob = 0.5
     tgt_selection = 'fixed' # which target to use among the four.
     blur = False # Blur the rest cells
     move_crs_pnt = False  # mosaic cross point moves freely if True
