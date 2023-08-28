@@ -124,8 +124,17 @@ def add_refcoco_config(cfg):
     cfg.DATASETS.DATASET_NAME = "refcoco"
     cfg.DATASETS.SPLIT_BY = "unc"
     cfg.DATASETS.MOSAIC_AUG = False
-
+    
     cfg.REFERRING = CN()
     cfg.REFERRING.BERT_TYPE = "bert-base-uncased"
     cfg.REFERRING.MAX_TOKENS = 20
+    
+    cfg.local_rank = 0
+    cfg.deepspeed = False
+    cfg.deepspeed_config = None
+    cfg.deepscale = False 
+    cfg.deepscale_config = None
+    cfg.deepspeed_mpi = False
+    
+    
     

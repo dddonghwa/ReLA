@@ -54,6 +54,7 @@ from gres_model import (
     MosaicVisualization
 )
 
+import deepspeed
 
 class Trainer(DefaultTrainer):
 
@@ -205,8 +206,12 @@ def setup(args):
     add_maskformer2_config(cfg)
     add_refcoco_config(cfg)
     cfg.merge_from_file(args.config_file)
-    cfg.merge_from_list(args.opts)
-    cfg.freeze()
+    cfg.merge_from_list(args.opts) 
+    # cfg.freeze()
+    # deepspeed
+    cfg.merge_from_list(['local_rank', args.local_rank, 'deepspeed',args.deepspeed,
+                         'deepspeed_config', args.deepspeed_config, 'deepscale', args.deepscale, 
+                         'deepscale_config', args.deepscale_config, 'deepspeed_mpi', args.deepspeed_mpi])
     default_setup(cfg, args)
     setup_logger(output=cfg.OUTPUT_DIR, distributed_rank=comm.get_rank(), name="referring")
     return cfg
@@ -224,7 +229,6 @@ def main(args):
         if comm.is_main_process():
             verify_results(cfg, res)
         return res
-
     trainer = Trainer(cfg)
     trainer.resume_or_load(resume=args.resume)
     return trainer.train()
@@ -232,7 +236,9 @@ def main(args):
 
 if __name__ == "__main__":
     warnings.filterwarnings(action='ignore')
-    args = default_argument_parser().parse_args()
+    
+    args = default_argument_parser().parse_args() # add deepspeed configuration
+    
     print("Command Line Args:", args)
     launch(
         main,
